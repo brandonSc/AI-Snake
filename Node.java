@@ -9,7 +9,7 @@ public class Node
 
     public Node ( Node parent, int x, int y ) {
         this.parent = parent;
-        this.children = new ArrayList<Node>(4);
+        this.children = null;
         this.visited = false;
         setState(x,y);
     }
@@ -19,33 +19,34 @@ public class Node
         this.y = y;
     }
 
-    public void addChild ( Node child ) {
-        this.children.add(child);
-    }
-
-    public void addChildren ( Node[] children ) {
-        for ( Node n : children ) 
-            this.children.add(n);
-    }
-
-    public ArrayList<Node> getChildren() {
-        return this.children; 
+    @Override 
+    public boolean equals ( Object other ) {
+        if ( other == null ) return false;
+        Node n = (Node)other;
+        return (n.x == this.x && n.y == this.y);
     }
 
     @Override 
-    public boolean equals ( Object other ) {
-        Node n = (Node)other;
-        return n.x == this.x && n.y == this.y;
+    public int hashCode() { 
+        return -100*this.x+20*this.y;
     }
 
     public void generateChildren() {
-        if ( x-1 > 0 )
-            addChild(new Node(this,x-1,y));
+        this.children = new ArrayList<Node>(4);
+
+        if ( x-1 >= 0 )
+            children.add(new Node(this,x-1,y));
+        if ( y-1 >= 0 )
+            children.add(new Node(this,x,y-1));
         if ( x+1 < Board.WIDTH ) 
-            addChild(new Node(this,x+1,y));
-        if ( y-1 > 0 )
-            addChild(new Node(this,x,y-1));
+            children.add(new Node(this,x+1,y));
         if ( y+1 < Board.HEIGHT ) 
-            addChild(new Node(this,x,y+1));
+            children.add(new Node(this,x,y+1));
+    }
+
+    @Override
+    public String toString() {
+        return "("+x+","+y+")";
     }
 }
+
